@@ -1,7 +1,6 @@
 import os
 import generate
 
-from PIL import ImageChops
 
 def test_check_top_image():
     """
@@ -12,6 +11,6 @@ def test_check_top_image():
     assert a
     assert a.size == (1080, 1920)
 
-    assert a.getpixel((1000, 1000)) == (255,255,255)
+    assert a.getpixel((1000, 1000)) == (0,0,0)
 
     assert a.getpixel((10,10)) == (50,66,82)
