@@ -20,15 +20,19 @@ def create_image_combine_top(top_image, width=1080, height=1920):
     return bottom_image
 
 def generate_time():
+    """Generates the time on the top image"""
     pass
 
 def generate_date():
+    """Generates the date on the top image"""
     pass
 
 def generate_temperature():
+    """Generates the temperature on the top image"""
     pass
 
 def generate_weather_icon():
+    """Generates the weather icon on the top image"""
     pass
 
 
