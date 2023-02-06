@@ -1,5 +1,6 @@
 import os
 import dotw
+import week
 
 from PIL import Image, ImageDraw, ImageFont
 def create_image_combine_top(top_image, width=1080, height=1920):
@@ -54,5 +55,26 @@ if __name__ == "__main__":
     first_week = dotw.dotw_header(items)
 
     a.paste(first_week, (0, 720 + 140))
+
+    # Generate Sample week
+    sample_day = [{
+        "type" : "all_day",
+        "description" : "All day event"
+    },{
+        "type" : "scheduled",
+        "start_time" : "10:00",
+        "description" : "Dentist Appointment"
+    },{
+        "type" : "scheduled",
+        "start_time" : "13:00",
+        "description" : "Very long text that will take more than one line to adequately describe, so much text!"
+    }]
+    b = week.generate_day(sample_day)
+    c = week.generate_day(sample_day, minimal=True)
+
+    # Generate a Full Week
+    new_week = [b] * 3 + [c] * 4
+    d = week.generate_week(new_week)
+    a.paste(d, (0, 720 + 140 + first_week.size[1]))
 
     a.save("result.jpg")
