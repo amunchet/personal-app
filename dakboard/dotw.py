@@ -66,9 +66,6 @@ def dotw_header(items=""):
     # Save the resulting image
     return result
 
-
-
-
 if __name__ == "__main__":
 
     b = dotw_header()
