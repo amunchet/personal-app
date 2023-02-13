@@ -2,3 +2,6 @@ pytest
 pillow
 python-dotenv
 requests
+
+ics
+pytz
