@@ -162,11 +162,13 @@ if __name__ == "__main__":
     # Generate Sample week
     sample_day = [{
         "type" : "all_day",
-        "description" : "All day event"
+        "description" : "All day event",
+        "color" : "red"
     },{
         "type" : "scheduled",
         "start_time" : "10:00",
-        "description" : "Dentist Appointment"
+        "description" : "Dentist Appointment",
+        "color" : "orange"
     },{
         "type" : "scheduled",
         "start_time" : "13:00",

@@ -8,7 +8,7 @@ from typing import List
 from PIL import Image, ImageDraw, ImageFont
 from dakboard_logger import logger
 
-def individual_event(text, font="Lato-Light.ttf", all_day=False):
+def individual_event(text, font="Lato-Light.ttf", all_day=False, color="green"):
     """
     Draws an event
         - Orange dot (variable color)
@@ -54,7 +54,7 @@ def individual_event(text, font="Lato-Light.ttf", all_day=False):
         if calc_line_height < line_height:
             calc_line_height = line_height
         rectangle = [(10, 10), (day_width- 10, calc_line_height)]
-        draw.rounded_rectangle(rectangle, fill=(255, 0, 0), radius=radius)
+        draw.rounded_rectangle(rectangle, fill=color, radius=radius)
 
     # Load the font
     font_path = os.path.join("fonts", font)
@@ -65,7 +65,7 @@ def individual_event(text, font="Lato-Light.ttf", all_day=False):
     x = 10
     y = 14
     if not all_day:
-        draw.ellipse((x, y, x + dot_size, y + dot_size), fill="green")
+        draw.ellipse((x, y, x + dot_size, y + dot_size), fill=color)
 
     # Calculate the position of the first line of text
     x = 20
@@ -89,6 +89,7 @@ def generate_day(events:List, minimal=False):
         - type: `all_day` or `scheduled`
         - description: self-explanatory
         - start_time [optional] : only used on scheduled
+        - color [optional]: color for the event
     
     `minimal` - whether or not to squish the events into 1 line
     """
@@ -110,7 +111,9 @@ def generate_day(events:List, minimal=False):
             if len(desc) > 20:
                 desc = desc[:17] + "..."
 
-        a = individual_event(desc, all_day = item["type"] == "all_day")
+        a = individual_event(desc, all_day = item["type"] == "all_day", 
+            color=(item["color"] if "color" in item else "green")
+        )
         retval.append(a)
 
         logger.debug(f"Height for this event is: {a.size[1]}")
