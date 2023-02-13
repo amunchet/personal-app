@@ -14,3 +14,9 @@ def test_check_top_image():
     assert a.getpixel((1000, 1000)) == (0,0,0)
 
     assert a.getpixel((10,10)) == (50,66,82)
+
+def test_overall_generate():
+    """
+    Tests the entire generate
+    
+    """
