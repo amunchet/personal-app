@@ -129,7 +129,7 @@ def generate_weather_icon(base_image, weather_condition):
 
     return base_image
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     # Generate base and top image
     a = create_image_combine_top(os.path.join("photos", "test-top-edit.png"))
 
