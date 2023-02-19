@@ -22,13 +22,34 @@ if os.path.exists(".env.sample"):
 
 TZ = os.getenv("TZ")
 
-def load_events(start_date):
+def load_calendars():
     """
-    Loads all events from the calendars for the given day and the given date + 1 day
+    Load full ICS calendars
+        - Will be passed into parse_events to sort out the events
     """
     if not os.path.exists("calendar.json"):
         raise Exception("No Calendar.json file found - calendar would be empty")
 
+    with open("calendar.json") as f:
+        calendars = json.load(f)
+        for calendar in calendars:
+            logger.debug(f"Calendar {calendar['name']}")
+            url = calendar["link"]
+            response = requests.get(url)
+            if response.status_code != 200:
+                logger.error(f"Calendar failed to load: {calendar['name']}")
+            events = ics.Calendar(response.text)
+            calendar["events"] = events.events
+
+        logger.debug(f"[load_calendars] {calendars}")
+        return calendars
+
+
+
+def load_events(start_date, calendars):
+    """
+    Loads all events from the calendars for the given day and the given date + 1 day
+    """
     tz = pytz.timezone(TZ)
 
     if type(start_date) == str:
@@ -39,19 +60,12 @@ def load_events(start_date):
 
     end_date = start_date + timedelta(days=1, minutes=1)
 
-    with open("calendar.json") as f:
-        calendars = json.load(f)
-    
     retval = []
 
     for calendar in calendars:
         logger.debug(f"Calendar {calendar['name']}")
-        url = calendar["link"]
-        response = requests.get(url)
-        if response.status_code != 200:
-            logger.error(f"Calendar failed to load: {calendar['name']}")
-        events = ics.Calendar(response.text)
-        for event in events.events:
+        logger.debug(f"Calendar data:{calendar}")
+        for event in calendar["events"]:
 
             if(event.begin.datetime >= start_date and event.end.datetime <= end_date) or (event.all_day and event.begin.date() == arrow.get(start_date).date()):
                 color = (calendar["color"] if "color" in calendar else "")
