@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import requests
 import ics
 import pytz
+import arrow
 
 from dakboard_logger import logger
 from dotenv import load_dotenv
@@ -34,6 +35,8 @@ def load_events(start_date):
         start_date = datetime.strptime(start_date,"%Y-%m-%d")
         start_date = tz.localize(start_date)
     
+    logger.debug(f"Load events start date: {start_date}")
+
     end_date = start_date + timedelta(days=1, minutes=1)
 
     with open("calendar.json") as f:
@@ -50,16 +53,19 @@ def load_events(start_date):
         events = ics.Calendar(response.text)
         for event in events.events:
 
-            if(event.begin.datetime >= start_date and event.end.datetime <= end_date):
+            if(event.begin.datetime >= start_date and event.end.datetime <= end_date) or (event.all_day and event.begin.date() == arrow.get(start_date).date()):
                 color = (calendar["color"] if "color" in calendar else "")
                 event_type = "all_day" if event.all_day else "scheduled"
                 start_time = f"{event.begin.hour:02}:{event.begin.minute:02}"
                 description = event.name
 
-                retval.append({
+                output = {
                     "type" : event_type,
                     "description" : description,
                     "color" : color,
                     "start_time" : start_time
-                })
+                }
+                logger.debug(f"Calendar event:{output}")
+                retval.append(output)
+    logger.debug(f"Calendar retval: {retval}")
     return retval

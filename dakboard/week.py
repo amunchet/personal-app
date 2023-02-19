@@ -103,7 +103,7 @@ def generate_day(events:List, minimal=False):
         logger.debug(f"Event:{item}")
 
         desc = item["description"]
-        if "start_time" in item:
+        if "start_time" in item and item["type"] != "all_day":
             desc = f"{item['start_time']} {item['description']}"
 
 
@@ -142,6 +142,7 @@ def generate_week(days):
     Generates a week from an array of day images
     """
     width = 155
+    logger.debug(f"Generate week: {days}")
     height = max([x.size[1] for x in days])
     
     image = Image.new("RGB", (width * len(days), height), (0, 0, 0))

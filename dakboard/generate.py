@@ -8,6 +8,8 @@ import week
 import weather
 import ics_calendar
 
+from dakboard_logger import logger
+
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -43,6 +45,8 @@ def generate_time(im, now=None):
     else:
         time_str = now
 
+    logger.debug(f"Generate time: {time_str}")
+
     # Specify the font and font size to use
     font = ImageFont.truetype("arial.ttf", 50)
 
@@ -71,6 +75,8 @@ def generate_date(im, date_str=None):
         # Format the current date and day as a string in the desired format (Wednesday, May 31)
         date_str = now.strftime("%A, %B %d")
 
+    logger.debug(f"Generate date: {date_str}")
+
     # Specify the font and font size to use
     font = ImageFont.truetype("arial.ttf", 30)
 
@@ -78,7 +84,7 @@ def generate_date(im, date_str=None):
     text_size = draw.textsize(date_str, font)
 
     # Calculate the position to draw the text on the image
-    x = 25
+    x = 20
     # y = im.height - text_size[1]
     y = 660
 
@@ -99,6 +105,8 @@ def generate_temperature(image, temperature):
     y = 630
     color = (0, 0, 0)
     draw.text((x, y), text, font=font, fill=color)
+
+    logger.debug(f"Generate Temperature: {temperature}")
     return image
 
 
@@ -137,10 +145,11 @@ def generate_weather_icon(base_image, weather_condition):
         icon,
     )
 
+    logger.debug("Generate weather: {weather_condition}")
     return base_image
 
 
-def current_week_array(offset=0, now=None):
+def current_week_array(offset=0, now=None, datetimeonly=False):
     if now is None:
         now = arrow.now()
     else:
@@ -160,10 +169,13 @@ def current_week_array(offset=0, now=None):
         
         second = (start == now)
 
-        retval.append((str(first), second))
-
+        if not datetimeonly:
+            retval.append((str(first), second))
+        else:
+            retval.append(start.strftime("%Y-%m-%d"))
+        
         start += datetime.timedelta(days=1)
-
+    logger.debug(f"Current week array: {retval}")
     return retval
 
 

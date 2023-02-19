@@ -23,6 +23,7 @@ def get_current_weather():
     weather_data = response.json()
 
     if response.status_code == 200:
+        logger.debug(f"Get current weather: {response.text}")
         return weather_data['weather'][0]['main']
     else:
         logger.error(response.text)
@@ -34,6 +35,8 @@ def get_current_temperature():
     response = requests.get(complete_url)
     data = response.json()
     
+    logger.debug(f"Get current temperature:{data}")
+
     if data["cod"] != "404":
         temperature_C = data["main"]["temp"] - 273.15
         temperature_F = (temperature_C * 9/5) + 32
