@@ -14,8 +14,11 @@ if __name__ == "__main__": # pragma: no cover
 
     # Get time and date
     ## Put onto top image
-    a = generate_temperature(a, weather.get_current_temperature())
-    a = generate_weather_icon(a, weather.get_current_weather())
+
+
+    current_weather = weather.call_weather_api()
+    a = generate_temperature(a, weather.get_current_temperature(current_weather))
+    a = generate_weather_icon(a, weather.get_current_weather(current_weather))
 
     # Get the calendars
     calendars = ics_calendar.load_calendars()

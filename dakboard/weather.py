@@ -15,26 +15,21 @@ zipcode = os.getenv("WEATHER_ZIPCODE")
 if not api_key:
     raise Exception("No Weather key set")
 
-
-def get_current_weather():
+def call_weather_api():
     complete_url = base_url + "appid=" + api_key + "&zip=" + zipcode + ",us"
-
     response = requests.get(complete_url)
-    weather_data = response.json()
 
     if response.status_code == 200:
         logger.debug(f"Get current weather: {response.text}")
-        return weather_data['weather'][0]['main']
+        return response.json()
     else:
         logger.error(response.text)
         return None
 
-def get_current_temperature():
-    complete_url = base_url + "appid=" + api_key + "&zip=" + zipcode + ",us"
+def get_current_weather(weather_data):
+        return weather_data['weather'][0]['main']
     
-    response = requests.get(complete_url)
-    data = response.json()
-    
+def get_current_temperature(data):
     logger.debug(f"Get current temperature:{data}")
 
     if data["cod"] != "404":
