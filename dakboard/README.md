@@ -9,5 +9,3 @@
 
 ## Google Calendar API
 We are just using the private ICS files.  Trello also shares private ICS files.
-
-A bit scary, as this is just security through obscurity.
