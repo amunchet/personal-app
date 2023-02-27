@@ -40,7 +40,7 @@ if __name__ == "__main__": # pragma: no cover
         wk_arr = []
         for day in current_week_array(datetimeonly=True, offset=current_week):
             z = ics_calendar.load_events(day, calendars)
-            x = week.generate_day(z, minimal=(current_week == 0))
+            x = week.generate_day(z, minimal=(current_week != 0))
             wk_arr.append(x)
 
         d = week.generate_week(wk_arr)
