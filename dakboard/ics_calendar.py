@@ -100,7 +100,7 @@ def load_events(start_date, calendars):
     logger.debug(f"Load events start date: {start_date}")
 
     # end_date = start_date + timedelta(days=1, minutes=1)
-    end_date = start_date + timedelta(days=1)
+    end_date = start_date + timedelta(hours=23, minutes=59, seconds=59)
 
     retval = []
 
