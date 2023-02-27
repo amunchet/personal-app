@@ -52,31 +52,35 @@ def check_recurring(event, start_date, end_date):
     """
     Checks for recurring dates
     """
-    logger.debug(f"Start date tzinfo: {start_date.tzinfo}")
-    logger.debug(f"End date tzinfo: {start_date.tzinfo}")
     tz = pytz.timezone(TZ)   
         
     #start_date = start_date.astimezone(pytz.utc)
     # end_date = end_date.astimezone(pytz.utc)
 
 
-
     retval = False
     for extra in event.extra:
         if "rrule" in str(extra).lower():
-            logger.debug("Found a rrule")
-            logger.debug(str(extra))
+            logger.debug(f"[rrule] {event.description}")
+            logger.debug(f"[rrule] {event.name}")
+            logger.debug("[rrule] Found a rrule")
+            logger.debug(f"[rrule] {extra}")
             
-            found = rrule.rrulestr(str(extra))
-            
+            found = rrule.rrulestr(str(extra), dtstart=event.begin, ignoretz=True)
+            logger.debug(f"[rrule] {found}")
+
             try:
                 a = found.between(end_date, start_date, inc=True)
             except TypeError:
                 start_date = start_date.replace(tzinfo=None)
                 end_date = end_date.replace(tzinfo=None)
-                
-                a = found.between(end_date, start_date, inc=True)
+                found = found.replace(dtstart=event.begin.replace(tzinfo=None))
 
+                a = found.between(start_date, end_date, inc=True)
+           
+            logger.debug(f"[rrule] Start date: {start_date}")
+            logger.debug(f"[rrule] End date: {end_date}")
+            logger.debug(f"[rrule] Result of found: {a}")
             if a:
                 retval = True
 
@@ -95,7 +99,8 @@ def load_events(start_date, calendars):
     
     logger.debug(f"Load events start date: {start_date}")
 
-    end_date = start_date + timedelta(days=1, minutes=1)
+    # end_date = start_date + timedelta(days=1, minutes=1)
+    end_date = start_date + timedelta(days=1)
 
     retval = []
 
