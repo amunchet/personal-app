@@ -12,6 +12,8 @@ import ics
 import pytz
 import arrow
 
+import dateutil.rrule as rrule
+
 from dakboard_logger import logger
 from dotenv import load_dotenv
 
@@ -46,6 +48,41 @@ def load_calendars():
 
 
 
+def check_recurring(event, start_date, end_date):
+    """
+    Checks for recurring dates
+    """
+    logger.debug(f"Start date tzinfo: {start_date.tzinfo}")
+    logger.debug(f"End date tzinfo: {start_date.tzinfo}")
+    tz = pytz.timezone(TZ)   
+        
+    #start_date = start_date.astimezone(pytz.utc)
+    # end_date = end_date.astimezone(pytz.utc)
+
+
+
+    retval = False
+    for extra in event.extra:
+        if "rrule" in str(extra).lower():
+            logger.debug("Found a rrule")
+            logger.debug(str(extra))
+            
+            found = rrule.rrulestr(str(extra))
+            
+            try:
+                a = found.between(end_date, start_date, inc=True)
+            except TypeError:
+                start_date = start_date.replace(tzinfo=None)
+                end_date = end_date.replace(tzinfo=None)
+                
+                a = found.between(end_date, start_date, inc=True)
+
+            if a:
+                retval = True
+
+    return retval
+
+
 def load_events(start_date, calendars):
     """
     Loads all events from the calendars for the given day and the given date + 1 day
@@ -67,7 +104,12 @@ def load_events(start_date, calendars):
         logger.debug(f"Calendar data:{calendar}")
         for event in calendar["events"]:
 
-            if(event.begin.datetime >= start_date and event.end.datetime <= end_date) or (event.all_day and event.begin.date() == arrow.get(start_date).date()):
+            if(
+                    (event.begin.datetime >= start_date and event.end.datetime <= end_date) 
+                    or (event.all_day and event.begin.date() == arrow.get(start_date).date()
+                    or check_recurring(event, start_date, end_date)
+            )):
+
                 color = (calendar["color"] if "color" in calendar else "")
                 event_type = "all_day" if event.all_day else "scheduled"
                 start_time = f"{event.begin.hour:02}:{event.begin.minute:02}"
