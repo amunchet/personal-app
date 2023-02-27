@@ -1,6 +1,18 @@
 import logging
 
-level = logging.WARNING
+from dotenv import load_dotenv
+
+load_dotenv()
+
+if os.path.exists(".env.sample"):
+    load_dotenv(".env.sample")
+
+level = os.getenv("LOG_LEVEL")
+if level == "DEBUG":
+    level = logging.DEBUG
+else:
+    level = logging.WARNING
+
 
 logger = logging.getLogger("dakboard_logger")
 # Set the logging level of the logger
