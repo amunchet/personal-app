@@ -1,5 +1,4 @@
 #!/bin/bash
-dhclient # To ensure the lxc container has an ip
 
 # Script to upload to dakboard
 cd /root/personal-app/dakboard
