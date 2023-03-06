@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if anything else is still running
+if [[ `pgrep -f $0` != "$$" ]]; then
+	echo "Another instance of script already exist! Exiting"
+	exit
+fi
+
 # Script to upload to dakboard
 cd /root/personal-app/dakboard
 
